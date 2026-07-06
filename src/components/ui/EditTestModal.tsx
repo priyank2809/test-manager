@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import { useTestForm } from "../../hooks/useTestForm";
-import { updateTest } from "../../api/tests";
+import { updateTest, getTestById } from "../../api/tests";
 import { useTestsStore } from "../../store/testsStore";
 import { useState } from "react";
 import MultiSelect from "./MultiSelect";
@@ -53,9 +53,10 @@ export default function EditTestModal({
     setIsSaving(true);
     setSaveError(null);
     try {
-      const updated = await updateTest(testId, buildPayload(values));
+      await updateTest(testId, buildPayload(values));
       useTestsStore.getState().invalidate();
-      onSaved(updated);
+      const refreshed = await getTestById(testId);
+      onSaved(refreshed);
     } catch {
       setSaveError("Failed to save changes. Please try again.");
     } finally {
